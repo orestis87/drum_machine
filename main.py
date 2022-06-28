@@ -25,3 +25,8 @@ run = True
 while run:
     timer.tick(fps)
     screen.fill(black)
+# Checking every keyboard and mouse action
+    for event in pygame.event.get():
+# Adding the option to exit the game
+        if event.type == pygame.QUIT:
+            run = False
