@@ -22,6 +22,7 @@ label_font = pygame.font.Font('Snack bowl.otf', 20)
 fps = 60
 timer = pygame.time.Clock()
 beats = 8
+instruments = 9
 
 # Drawing the main screen
 def draw_grid():
@@ -49,8 +50,13 @@ def draw_grid():
     cowbell_text = label_font.render('Blue Oyster', True, white)
     screen.blit(cowbell_text, (10, 560))
     # Painting lines between the names
-    for i in range(8):
+    for i in range(instruments):
         pygame.draw.line(screen, green, (0, (i * 67) + 67), (290, (i*67) + 67), 5)
+    # Painting grid lines for rhythm
+    for i in range(beats):
+        for j in range(instruments):
+            rect = pygame.draw.rect(screen, green, [i * ((WIDTH - 290) // beats) + 295, (j * 67),
+                                                  ((WIDTH - 290) // beats), ((HEIGHT - 200)//instruments)], 5)
 run = True
 while run:
     timer.tick(fps)
