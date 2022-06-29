@@ -12,6 +12,8 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 gray = (128, 128, 128)
 green = (0, 153, 0)
+gold = (212, 175, 55)
+
 # Creating the screen
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
 pygame.display.set_caption('SUSE Drum Machine')
@@ -24,11 +26,11 @@ timer = pygame.time.Clock()
 beats = 8
 instruments = 9
 boxes = []
-clicked = [[-1 for _ in range(beats)]]
+clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
 
 
 # Drawing the main screen
-def draw_grid():
+def draw_grid(clicks):
     left_menu = pygame.draw.rect(screen, green, [0, 0, 290, HEIGHT-200], 5)
     bottom_menu = pygame.draw.rect(screen, green, [0, HEIGHT - 200, WIDTH, 200], 5)
     boxes= []
@@ -58,8 +60,16 @@ def draw_grid():
     # Painting grid lines for rhythm
     for i in range(beats):
         for j in range(instruments):
-            rect = pygame.draw.rect(screen, green, [i * ((WIDTH - 290) // beats) + 295, (j * 67),
-                                                  ((WIDTH - 290) // beats), ((HEIGHT - 200)//instruments)], 5)
+            if clicks[j][i] == -1:
+                color = gray
+            else:
+                color = green
+            rect = pygame.draw.rect(screen, color, [i * ((WIDTH - 290) // beats) + 300, (j * 67) + 5,
+                                                  ((WIDTH - 290) // beats) - 10, ((HEIGHT - 200)//instruments) - 10], 0)
+            pygame.draw.rect(screen, green, [i * ((WIDTH - 290) // beats) + 295, (j * 67),
+                                             ((WIDTH - 290) // beats), ((HEIGHT - 200)//instruments)], 5)
+            pygame.draw.rect(screen, black, [i * ((WIDTH - 290) // beats) + 295, (j * 67),
+                                                    ((WIDTH - 290) // beats), ((HEIGHT - 200)//instruments)], 2)
             boxes.append((rect, (i, j)))
     return boxes
 
@@ -67,7 +77,7 @@ run = True
 while run:
     timer.tick(fps)
     screen.fill(black)
-    boxes = draw_grid()
+    boxes = draw_grid(clicked)
     # Checking every keyboard and mouse action
     for event in pygame.event.get():
         # Adding the option to exit the game
@@ -77,7 +87,7 @@ while run:
             for i in range(len(boxes)):
                 if boxes[i][0].colliderect(event.pos):
                     coords = boxes[i][1]
-                    clicked[coords[1]][coords[0]]
+                    clicked[coords[1]][coords[0]] *= -1
     pygame.display.flip()
 pygame.quit()
 
