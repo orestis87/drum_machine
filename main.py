@@ -1,7 +1,7 @@
 import pygame
 from pygame import mixer
-
 pygame.init()
+pygame.mixer.init()
 
 # Setting up the screen
 WIDTH = 1400
@@ -32,6 +32,42 @@ playing = True
 active_length = 0
 active_beat = 0
 beat_changed = True
+
+# Load sounds
+pygame.mixer.init(44100, -16,2,2048)
+hi_hat = mixer.Sound('Samples\Hats\closed_hi-hat.wav')
+snare = mixer.Sound('Samples\snare\Snrambnt2.wav')
+kick = mixer.Sound('Samples\Kicks\AFCC kick 2.wav')
+tom1 = mixer.Sound('Samples\Tom\\10tom.wav')
+tom2 = mixer.Sound('Samples\Tom\\14tom.wav')
+floor_tom = mixer.Sound('Samples\Tom\\16tom.wav')
+crash_1 = mixer.Sound('Samples\Crash\cym10splsh.wav')
+crash_2 = mixer.Sound('Samples\Crash\cymhicrsh.wav')
+cowbell = mixer.Sound('Samples\Cowbell\low_cowbell.wav')
+
+def play_notes():
+    for i in range(len(clicked)):
+        if clicked[i][active_beat] == 1:
+            if i == 0:
+                hi_hat.play()
+            if i == 1:
+                snare.play()
+            if i == 2:
+                kick.play()
+            if i == 3:
+                tom1.play()
+            if i == 4:
+                tom2.play()
+            if i == 5:
+                floor_tom.play()
+            if i == 6:
+                crash_1.play()
+            if i == 7:
+                crash_2.play()
+            if i == 8:
+                cowbell.play()
+
+
 # Drawing the main screen
 def draw_grid(clicks, beat):
     left_menu = pygame.draw.rect(screen, green, [0, 0, 290, HEIGHT-200], 5)
@@ -83,6 +119,10 @@ while run:
     timer.tick(fps)
     screen.fill(black)
     boxes = draw_grid(clicked, active_beat)
+    if beat_changed:
+        play_notes()
+        beat_changed = False
+
     # Checking every keyboard and mouse action
     for event in pygame.event.get():
         # Adding the option to exit the game
