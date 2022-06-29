@@ -23,11 +23,14 @@ fps = 60
 timer = pygame.time.Clock()
 beats = 8
 instruments = 9
+boxes = []
+clicked = [[-1 for _ in range(beats)]]
+
 
 # Drawing the main screen
 def draw_grid():
-    left_menu = pygame.draw.rect(screen, green, [0, 0 , 290, HEIGHT], 5)
-    bottom_menu = pygame.draw.rect(screen, green, [0, HEIGHT -200, WIDTH,200], 5)
+    left_menu = pygame.draw.rect(screen, green, [0, 0, 290, HEIGHT-200], 5)
+    bottom_menu = pygame.draw.rect(screen, green, [0, HEIGHT - 200, WIDTH, 200], 5)
     boxes= []
     colors = [gray, white, gray]
     # Putting the names of the instruments on the screen
@@ -57,16 +60,24 @@ def draw_grid():
         for j in range(instruments):
             rect = pygame.draw.rect(screen, green, [i * ((WIDTH - 290) // beats) + 295, (j * 67),
                                                   ((WIDTH - 290) // beats), ((HEIGHT - 200)//instruments)], 5)
+            boxes.append((rect, (i, j)))
+    return boxes
+
 run = True
 while run:
     timer.tick(fps)
     screen.fill(black)
-    draw_grid()
+    boxes = draw_grid()
     # Checking every keyboard and mouse action
     for event in pygame.event.get():
         # Adding the option to exit the game
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            for i in range(len(boxes)):
+                if boxes[i][0].colliderect(event.pos):
+                    coords = boxes[i][1]
+                    clicked[coords[1]][coords[0]]
     pygame.display.flip()
 pygame.quit()
 
