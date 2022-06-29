@@ -3,7 +3,7 @@ from pygame import mixer
 pygame.init()
 pygame.mixer.init()
 #test for git
-dfgdfgdfgdfgdfg
+#dfgdfgdfgdfgdfg
 # Setting up the screen
 WIDTH = 1400
 HEIGHT = 800
