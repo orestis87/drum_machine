@@ -13,7 +13,7 @@ white = (255, 255, 255)
 gray = (128, 128, 128)
 green = (0, 153, 0)
 gold = (212, 175, 55)
-
+blue = (0, 255, 255)
 # Creating the screen
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
 pygame.display.set_caption('SUSE Drum Machine')
@@ -23,14 +23,17 @@ label_font = pygame.font.Font('Snack bowl.otf', 20)
 
 fps = 60
 timer = pygame.time.Clock()
-beats = 8
+beats = 16
 instruments = 9
 boxes = []
 clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
-
-
+bpm = 240
+playing = True
+active_length = 0
+active_beat = 1
+beat_changed = True
 # Drawing the main screen
-def draw_grid(clicks):
+def draw_grid(clicks, beat):
     left_menu = pygame.draw.rect(screen, green, [0, 0, 290, HEIGHT-200], 5)
     bottom_menu = pygame.draw.rect(screen, green, [0, HEIGHT - 200, WIDTH, 200], 5)
     boxes= []
@@ -71,13 +74,15 @@ def draw_grid(clicks):
             pygame.draw.rect(screen, black, [i * ((WIDTH - 290) // beats) + 295, (j * 67),
                                                     ((WIDTH - 290) // beats), ((HEIGHT - 200)//instruments)], 2)
             boxes.append((rect, (i, j)))
+
+        active = pygame.draw.rect(screen, blue, [beat * ((WIDTH - 290)//beats) + 295, 0, ((WIDTH - 295)//beats), instruments * 67], 5)
     return boxes
 
 run = True
 while run:
     timer.tick(fps)
     screen.fill(black)
-    boxes = draw_grid(clicked)
+    boxes = draw_grid(clicked, active_beat)
     # Checking every keyboard and mouse action
     for event in pygame.event.get():
         # Adding the option to exit the game
@@ -85,9 +90,24 @@ while run:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             for i in range(len(boxes)):
-                if boxes[i][0].colliderect(event.pos):
+                if boxes[i][0].collidepoint(event.pos):
                     coords = boxes[i][1]
                     clicked[coords[1]][coords[0]] *= -1
+
+    beat_length = fps * 60 // bpm
+
+    if playing:
+        if active_length < beat_length:
+            active_length +=1
+        else:
+            active_length = 0
+            if active_beat < beats - 1:
+                active_beat += 1
+                beat_changed = True
+            else:
+                active_beat = 0
+                beat_changed = True
+
     pygame.display.flip()
 pygame.quit()
 
