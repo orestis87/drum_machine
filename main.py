@@ -30,7 +30,7 @@ clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
 bpm = 240
 playing = True
 active_length = 0
-active_beat = 1
+active_beat = 0
 beat_changed = True
 # Drawing the main screen
 def draw_grid(clicks, beat):
