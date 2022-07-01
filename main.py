@@ -10,6 +10,7 @@ HEIGHT = 800
 black = (0, 0, 0)
 white = (255, 255, 255)
 gray = (128, 128, 128)
+dark_gray = (50, 50, 50, 0)
 green = (0, 153, 0)
 gold = (212, 175, 55)
 blue = (0, 255, 255)
@@ -19,10 +20,10 @@ pygame.display.set_caption('SUSE Drum Machine')
 
 # Adding custom font
 label_font = pygame.font.Font('Snack bowl.otf', 20)
-
+medium_font = pygame.font.Font('Snack bowl.otf', 25)
 fps = 60
 timer = pygame.time.Clock()
-beats = 16
+beats = 8
 instruments = 9
 boxes = []
 clicked = [[-1 for _ in range(beats)] for _ in range(instruments)]
@@ -43,6 +44,7 @@ floor_tom = mixer.Sound('Samples\Tom\\16tom.wav')
 crash_1 = mixer.Sound('Samples\Crash\cym10splsh.wav')
 crash_2 = mixer.Sound('Samples\Crash\cymhicrsh.wav')
 cowbell = mixer.Sound('Samples\Cowbell\low_cowbell.wav')
+pygame.mixer.set_num_channels(instruments * 3)
 
 def play_notes():
     for i in range(len(clicked)):
@@ -118,6 +120,15 @@ while run:
     timer.tick(fps)
     screen.fill(black)
     boxes = draw_grid(clicked, active_beat)
+    # Buttons
+    play_pause = pygame.draw.rect(screen, gray, [50, HEIGHT - 150, 200, 100], 5)
+    play_text = label_font.render('Play/Pause', True, white)
+    screen.blit(play_text, (70, HEIGHT - 130))
+    if playing:
+        play_text2 = medium_font.render('Playing', True, green)
+    else:
+        play_text2 = medium_font.render ('Paused', True, green)
+    screen.blit(play_text2, (70, HEIGHT - 100))
     if beat_changed:
         play_notes()
         beat_changed = False
@@ -132,6 +143,13 @@ while run:
                 if boxes[i][0].collidepoint(event.pos):
                     coords = boxes[i][1]
                     clicked[coords[1]][coords[0]] *= -1
+        if event.type == pygame.MOUSEBUTTONUP:
+            if play_pause.collidepoint(event.pos):
+                if playing:
+                    playing = False
+                elif not playing:
+                    playing = True
+
 
     beat_length = fps * 60 // bpm
 
